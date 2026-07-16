@@ -91,6 +91,20 @@
   .row2{display:flex;gap:10px;}
   .row2 .field{flex:1;}
   .close-x{position:absolute;top:10px;right:12px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink-soft);}
+
+  @media(max-width:600px){
+    .wrap{padding:16px 12px 40px;}
+    header{flex-direction:column;align-items:flex-start;gap:10px;}
+    h1{font-size:22px;}
+    .toolbar{flex-direction:column;align-items:stretch;}
+    .filters{margin-left:0;flex-direction:column;}
+    .filters input,.filters select{width:100%;}
+    .modal{padding:16px;max-height:90vh;overflow-y:auto;}
+    .row2{flex-direction:column;gap:0;}
+    .card-actions{flex-direction:column;}
+    .card-actions select,.card-actions button{width:100%;}
+    button{padding:12px 14px;}
+  }
 </style>
 </head>
 <body>
@@ -184,34 +198,31 @@ function openModal(id){
 }
 function closeModal(){ document.getElementById('modalBg').classList.remove('open'); editingId=null; }
 
-function saveEntry(){
+async function saveEntry(){
   const name = f_name.value.trim();
   if(!name){ alert('Business name is required'); return; }
   const data = {
     name, phone:f_phone.value.trim(), city:f_city.value.trim(),
     issue:f_issue.value.trim(), status:f_status.value,
-    nextdate:f_nextdate.value, notes:f_notes.value.trim(),
-    updated:new Date().toISOString()
+    nextdate:f_nextdate.value, notes:f_notes.value.trim()
   };
   if(editingId){
-    const i = entries.findIndex(x=>x.id===editingId);
-    entries[i] = {...entries[i], ...data};
+    await fetch('/api/leads/'+editingId, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
   } else {
-    entries.unshift({id:'e'+Date.now(), created:new Date().toISOString(), ...data});
+    await fetch('/api/leads', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
   }
-  persist(); closeModal(); render();
+  closeModal(); load();
 }
 
-function quickStatus(id, status){
-  const e = entries.find(x=>x.id===id);
-  e.status = status; e.updated = new Date().toISOString();
-  persist(); render();
+async function quickStatus(id, status){
+  await fetch('/api/leads/'+id, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status})});
+  load();
 }
 
-function deleteEntry(id){
+async function deleteEntry(id){
   if(!confirm('Delete this lead?')) return;
-  entries = entries.filter(x=>x.id!==id);
-  persist(); render();
+  await fetch('/api/leads/'+id, {method:'DELETE'});
+  load();
 }
 
 function render(){
@@ -256,13 +267,13 @@ function render(){
       ${e.notes?`<div class="card-notes">${esc(e.notes)}</div>`:''}
       ${e.nextdate?`<div class="next-action">→ Next action: ${e.nextdate}</div>`:''}
       <div class="card-actions">
-        <select onchange="quickStatus('${e.id}', this.value)">
+        <select onchange="quickStatus('${e._id}', this.value)">
           <option value="" disabled selected>Update status…</option>
           <option>Not Contacted</option><option>No Answer</option><option>Interested</option>
           <option>Follow-up</option><option>Rejected</option><option>Won</option>
         </select>
-        <button onclick="openModal('${e.id}')">Edit</button>
-        <button onclick="deleteEntry('${e.id}')">Delete</button>
+        <button onclick="openModal('${e._id}')">Edit</button>
+        <button onclick="deleteEntry('${e._id}')">Delete</button>
       </div>
     </div>`;
   }).join('');
