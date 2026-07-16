@@ -60,7 +60,7 @@ VPS is accessed via `ssh contabo` (configured in ~/.ssh/config).
 ./deploy.sh
 
 # 2. Setup nginx + SSL on VPS
-ssh contabo 'cd /opt/quickcrm && npx tsx scripts/setup-nginx.ts'
+ssh contabo 'cd /var/wwwquickcrm && npx tsx scripts/setup-nginx.ts'
 ```
 
 ### Subsequent deploys
@@ -72,13 +72,13 @@ ssh contabo 'cd /opt/quickcrm && npx tsx scripts/setup-nginx.ts'
 ### Cert renewal (run periodically or via cron)
 
 ```bash
-ssh contabo 'cd /opt/quickcrm && npx tsx scripts/renew-certs.ts'
+ssh contabo 'cd /var/wwwquickcrm && npx tsx scripts/renew-certs.ts'
 
 # Check cert status
-ssh contabo 'cd /opt/quickcrm && npx tsx scripts/renew-certs.ts --list'
+ssh contabo 'cd /var/wwwquickcrm && npx tsx scripts/renew-certs.ts --list'
 
 # Force renewal
-ssh contabo 'cd /opt/quickcrm && npx tsx scripts/renew-certs.ts --force'
+ssh contabo 'cd /var/wwwquickcrm && npx tsx scripts/renew-certs.ts --force'
 ```
 
 ## Outreach Templates

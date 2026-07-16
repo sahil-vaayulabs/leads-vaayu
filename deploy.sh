@@ -4,7 +4,7 @@
 
 set -e
 
-REMOTE_DIR="/opt/quickcrm"
+REMOTE_DIR="/var/www/quickcrm"
 
 echo "▶ Syncing files to contabo:$REMOTE_DIR"
 rsync -avz --exclude node_modules --exclude dist --exclude .git \

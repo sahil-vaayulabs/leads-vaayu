@@ -31,6 +31,19 @@ api.post("/leads", async (c) => {
   return c.json({ ...body, _id: result.insertedId }, 201);
 });
 
+// Bulk create leads
+api.post("/leads/bulk", async (c) => {
+  const items = await c.req.json();
+  const now = new Date().toISOString();
+  const docs = items.map((item: Record<string, unknown>) => ({
+    ...item,
+    created: now,
+    updated: now,
+  }));
+  const result = await leads.insertMany(docs);
+  return c.json({ count: result.insertedCount }, 201);
+});
+
 // Update lead
 api.put("/leads/:id", async (c) => {
   const id = c.req.param("id");
