@@ -21,4 +21,3 @@ Keep the "specific issue observed" line different per business — that's what s
 
 mongodb.. 
 ----
-MONGODB_URI=mongodb+srv://sahilkashetwar24_db_user:wZ7GePdV4Oi63xe9@cluster0.o6oyy3b.mongodb.net/biodata-builder?retryWrites=true&w=majority
