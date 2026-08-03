@@ -4,17 +4,10 @@ services:
     ports:
       - "3100:3000"
     environment:
-      - MONGODB_URI=mongodb://mongo:27017
-      - DB_NAME=quickcrm
-    depends_on:
-      - mongo
+      - MONGODB_URI=${MONGODB_URI:-mongodb://host.docker.internal:27017}
+      - DB_NAME=${DB_NAME:-quickcrm}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - default
     restart: unless-stopped
-
-  mongo:
-    image: mongo:7
-    volumes:
-      - mongo_data:/data/db
-    restart: unless-stopped
-
-volumes:
-  mongo_data:

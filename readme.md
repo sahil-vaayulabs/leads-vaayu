@@ -35,7 +35,10 @@ DELETE /api/leads/:id   — Delete lead
 ## Local Development
 
 ```bash
-# Start MongoDB + app
+# Copy env template first (MongoDB is your Homebrew instance)
+cp .env.example .env
+
+# Start app
 docker compose up -d --build
 
 # Open in browser

@@ -1,0 +1,12 @@
+# VPS override — attaches the app to the shared `vaayu_os` network so it can
+# reach the mongo container by service name (mongodb://mongo:27017).
+# Used by deploy.sh: docker compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml up
+services:
+  app:
+    networks:
+      - default
+      - vaayu_os
+
+networks:
+  vaayu_os:
+    external: true

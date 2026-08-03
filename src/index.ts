@@ -1,9 +1,10 @@
+import "dotenv/config";
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { MongoClient, ObjectId } from "mongodb";
 
-const MONGO_URI = process.env.MONGODB_URI || "mongodb://mongo:27017";
+const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:27017";
 const DB_NAME = process.env.DB_NAME || "quickcrm";
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -67,15 +68,20 @@ app.use("/*", serveStatic({ root: "./public" }));
 
 // Start
 async function main() {
+  console.log(`[config] MONGODB_URI=${process.env.MONGODB_URI ?? "(unset)"}`);
+  console.log(`[config] DB_NAME=${process.env.DB_NAME ?? "(unset)"}`);
+  console.log(`[config] PORT=${process.env.PORT ?? "(unset)"}`);
+  console.log(`[mongo] connecting to ${MONGO_URI} ...`);
+
   await client.connect();
-  console.log(`Connected to MongoDB`);
+  console.log(`[mongo] connected, using db "${DB_NAME}"`);
 
   // Ensure index
   await leads.createIndex({ status: 1 });
   await leads.createIndex({ created: -1 });
 
   serve({ fetch: app.fetch, port: PORT }, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`[server] running on http://localhost:${PORT}`);
   });
 }
 
